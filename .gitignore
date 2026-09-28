@@ -7,6 +7,7 @@
 #  the file later. Check `git status` before every push.
 # ---------------------------------------------------------------
 linkedin_export_*/
+demo_export/
 *.csv
 messages.csv
 Connections.csv
@@ -33,6 +34,9 @@ data.json
 .linkedin_token
 *token*
 !*/tokengen*
+
+# the tunnel password, written by Start-Desk-Tunnel on first run
+desk-password.txt
 
 # working files
 pipeline/

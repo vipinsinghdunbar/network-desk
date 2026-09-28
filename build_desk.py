@@ -23,7 +23,11 @@ import sys
 import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
-STAGES = ["dk.py", "msg.py", "score.py", "refine.py", "export.py", "expand.py", "build.py"]
+# outcomes.py is last and does not feed the page: it reads the marks the page
+# wrote, and reports on the build. It runs after export.py has staged
+# desk-state.json into the work area.
+STAGES = ["dk.py", "msg.py", "score.py", "refine.py", "export.py", "expand.py",
+          "outcomes.py", "build.py"]
 # LinkedIn's API does not always serve these, and they are not fatal if missing.
 OPTIONAL = {"Member_Follows.csv", "SavedJobAlerts.csv", "Ad_Targeting.csv",
             "Inferences_about_you.csv", "Saved_Items.csv"}
@@ -179,7 +183,14 @@ def main():
             if r.returncode != 0:
                 print(f"\n  {stage} failed:\n{(r.stdout or '')[-800:]}{(r.stderr or '')[-1500:]}")
                 sys.exit(1)
-            print(f"  {stage:<12} done")
+            # outcomes.py is the one stage that reports rather than transforms.
+            # Its whole purpose is the text it prints, so swallowing that into the
+            # captured buffer - which only ever surfaces on failure - would make
+            # the stage pointless. Show it every time.
+            if stage == "outcomes.py":
+                print((r.stdout or "").rstrip())
+            else:
+                print(f"  {stage:<12} done")
 
         out_dir = HERE / "site"
         out_dir.mkdir(exist_ok=True)
@@ -189,6 +200,11 @@ def main():
         shutil.copy(built, out_dir / "desk.html")
         kb = (out_dir / "desk.html").stat().st_size // 1024
         print(f"\n  Desk rebuilt: {os.path.join('site', 'desk.html')}  ({kb} KB)")
+        # The outcome report is written by outcomes.py; keep it next to the page
+        # so it can be re-read without paying for another whole build.
+        rep = work / "outcomes.json"
+        if rep.exists():
+            shutil.copy(rep, out_dir / "outcomes.json")
 
         if args.open:
             import webbrowser

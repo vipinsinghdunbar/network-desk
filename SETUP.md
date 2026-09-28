@@ -61,10 +61,10 @@ but the form asks questions that are easy to answer wrongly.
 **Create app**.
 
 - **App name** — anything. "Network Desk" is fine.
-- **LinkedIn Page** — this is the one that trips people up. You must associate the app
-  with a LinkedIn *Page*, not your personal profile. If you do not have one, create a
-  Page first (linkedin.com/company/setup/new) — it takes two minutes and can be a
-  placeholder for your own projects.
+- **Company page** — this is the one that trips people up. Leave it as
+  **"Member Data Portability (Member) Default Company"**. Do *not* create a page
+  first, even if you have none: LinkedIn supplies that one, and the product does
+  not appear in the Products tab if the app is tied to a page you made.
 - **Privacy policy URL** — any URL you control. For a personal tool this can be a link
   to the repository.
 - **App logo** — any image.
@@ -159,6 +159,84 @@ bar under the tiles will read "saved on this PC" rather than offering a save but
 
 **`tar is not recognized` (Windows)** — your PATH is missing System32. The launcher
 restores it; if you are running commands by hand, use the launcher instead.
+
+**Want to see it working before you have any real data?** `make_demo_export.py` writes
+an entirely invented network — fake names, fake employers, fake message text — so you
+can run the whole pipeline and look at the result:
+
+```
+py make_demo_export.py
+py build_desk.py --src demo_export
+```
+
+Note the folder is `demo_export`, not `linkedin_export_*`, and the build names it
+explicitly. That is deliberate: the build auto-picks the newest `linkedin_export_*`
+folder, and a demo folder matching that pattern would quietly win over your real
+export and build the fake one instead. This way it cannot. Delete it when you are
+done.
+
+---
+
+## 7. Is the ranking actually any good?
+
+The desk tells you who to write to. It cannot tell you whether writing to them
+worked, because the one thing LinkedIn does not know — what actually happened —
+is recorded by hand on the card, and until now nothing ever read it back.
+
+Every build now prints a report. Nothing to type:
+
+```
+py build_desk.py
+```
+
+It answers three questions. Which action categories actually produce meetings.
+Whether the priority ordering predicts outcome at all, as a rank correlation.
+And how that differs by Denmark tier. It also writes `site/outcomes.json` so the
+same report can be re-read without rebuilding.
+
+**Read it with its limits.** You record outcomes for people you decided to write
+to, and the high-priority cards are the ones in front of you. The sample is
+selected twice, so this can show the ranking is not working. It cannot prove the
+ranking causes anything to work.
+
+**Do not trust a thin row.** Every rate carries a 95% interval and anything under
+eight resolved outcomes is marked `*thin`. A category showing 100% off three rows
+is not a finding, and the mark is there to stop it being read as one. The number
+to raise first is the number of recorded outcomes, not the formula.
+
+A **negative** correlation is the finding that matters most: it means the cards
+at the top of the queue are the ones that did worst, so the ordering is not merely
+uninformative but inverted. If you see that, `PRIO` in `pipeline/refine.py` wants
+rebuilding from the evidence rather than adjusting.
+
+---
+
+## 8. On your phone, from anywhere
+
+Step 5 gets you the desk on any phone on your own wi-fi. If you want it to work away
+from home — no laptop open at home, or simply a different network — use the tunnel.
+
+**Windows:** double-click **Start-Desk-Tunnel.cmd**.
+**macOS:** `chmod +x *.command` once, then open **Start Desk Tunnel.command**.
+
+It asks you to choose a password the first time, stores it in `desk-password.txt`, and
+prints an `https://something.trycloudflare.com` address. Type that into any phone
+browser. The address changes every time you start it.
+
+**What this does and does not do.** The desk, the export and `desk-state.json` stay on
+your machine — nothing is uploaded, and there is no copy of your network anywhere else.
+What is relayed is the page, which does contain your data, to whoever holds the address.
+So it is open to anyone the URL is sent to, which is why the password is mandatory and
+why the launcher refuses to start without one. The address cannot be guessed from your
+name and is not indexed, but it is not private by magic: treat it like any other link
+containing something you would not paste into a chat.
+
+Two things to know. The address only works while this machine is switched on and the
+tunnel is running. And the marks still save to this machine's `desk-state.json`, so if
+you make a mark on your phone it is on your laptop's disk, not on a cloud copy.
+
+If you would rather not have a relay at all, step 5 is the whole of it — the desk on
+your own wi-fi, no tunnel, no password, nothing off the machine.
 
 ---
 

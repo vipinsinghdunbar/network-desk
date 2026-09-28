@@ -12,6 +12,13 @@ Network Desk does that inference locally. Your data never leaves your machine â€
 is no server, no account, no cloud service. It is a Python script that writes an HTML
 page and a tiny local web server that shows it to you.
 
+The one exception is optional and you have to turn it on deliberately. If you want the
+desk on your phone away from home, a launcher hands you a public `https` address and
+relays the page through a tunnel. Your export and your marks still never leave the
+machine; what crosses the wire is the rendered page, which does contain your network â€”
+so that path is password-gated and refuses to start without one. Left alone, the desk
+is on your own wi-fi and nothing goes anywhere.
+
 
 
 ---
