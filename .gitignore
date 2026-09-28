@@ -1,0 +1,44 @@
+# ---------------------------------------------------------------
+#  YOUR DATA. Never commit any of this.
+#
+#  The export holds real names, job titles and excerpts of other
+#  people's private messages. A public repo keeps history forever,
+#  so a single accidental commit cannot be taken back by deleting
+#  the file later. Check `git status` before every push.
+# ---------------------------------------------------------------
+linkedin_export_*/
+*.csv
+messages.csv
+Connections.csv
+
+desk-state.json
+desk-state*.json
+state-history/
+calendar-met.json
+calendar-next.json
+cal_matches.json
+warm_bonds.json
+config.json
+_changelog.json
+_me.txt
+
+# the built page contains all of the above, rendered
+site/
+desk.html
+demo.html
+data.json
+*.pkl
+
+# credentials
+.linkedin_token
+*token*
+!*/tokengen*
+
+# working files
+pipeline/
+nd-*.zip
+export.zip
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
